@@ -15,8 +15,17 @@ builder.Services.AddIdentity<User, Role>(options => options.SignIn.RequireConfir
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    // Something needs to go here!
-    // options.Events.OnRedirectToLogin
+    options.Events.OnRedirectToLogin = context =>
+    {
+        context.Response.StatusCode = 401;
+        return Task.CompletedTask;
+    };
+
+    options.Events.OnRedirectToAccessDenied = context =>
+    {
+        context.Response.StatusCode = 403;
+        return Task.CompletedTask;
+    };
 });
 
 builder.Services.AddControllers();
