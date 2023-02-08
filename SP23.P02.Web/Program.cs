@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SP23.P02.Web.Data;
 using SP23.P02.Web.Features.Roles;
@@ -38,7 +39,9 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<DataContext>();
-    await SeedHelper.MigrateAndSeed(db);
+    var um = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+    var rm = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
+    await SeedHelper.MigrateAndSeed(db, um, rm);
 }
 
 // Configure the HTTP request pipeline.
