@@ -66,7 +66,7 @@ app.UseEndpoints(routeBuilder =>
 app.UseStaticFiles();
 app.UseSpa(spaBuilder =>
 {
-    spaBuilder.Options.SourcePath = "client-app";
+    spaBuilder.Options.SourcePath = "client-side";
     if (app.Environment.IsDevelopment())
     {
         spaBuilder.UseProxyToSpaDevelopmentServer("https://localhost:3000/");
