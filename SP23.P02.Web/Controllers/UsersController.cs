@@ -19,5 +19,17 @@ namespace SP23.P02.Web.Controllers
             users = dataContext.Set<User>();
         }//end UsersController(DataContext)
 
+        [HttpGet]
+        private object GetUserById()
+        {
+            throw new NotImplementedException();
+        }
+
+        [HttpPost]
+        public ActionResult<UserDto> CreateUser(UserDto user)
+        {
+            
+            return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
+        }//end ActionResult CreateUser
     }//end UsersController
 }//end namespace
