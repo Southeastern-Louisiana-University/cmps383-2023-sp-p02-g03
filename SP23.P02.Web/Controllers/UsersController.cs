@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SP23.P02.Web.Data;
-using SP23.P02.Web.Features.TrainStations;
 using SP23.P02.Web.Features.Users;
 
 namespace SP23.P02.Web.Controllers
@@ -10,15 +10,17 @@ namespace SP23.P02.Web.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly DbSet<User> users;
-        private readonly DataContext dataContext;
+        private readonly UserManager<User> userManager;
+        //private readonly RoleManager<Role> roleManager;
 
-        public UsersController(DataContext dataContext)
+        //will add - , RoleManager<Role> roleManager
+        public UsersController(UserManager<User> userManager)
         {
-            this.dataContext = dataContext;
-            users = dataContext.Set<User>();
+            this.userManager = userManager;
+            //this.roleManager = roleManager;
         }//end UsersController(DataContext)
 
+        //will take GET out. avoiding errors for now
         [HttpGet]
         private object GetUserById()
         {
