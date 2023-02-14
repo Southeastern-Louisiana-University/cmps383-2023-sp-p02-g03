@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using SP23.P02.Web.Data;
 using SP23.P02.Web.Features.Users;
 using SP23.P02.Web.Features.Roles;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SP23.P02.Web.Controllers
 {
@@ -20,18 +21,34 @@ namespace SP23.P02.Web.Controllers
             this.roleManager = roleManager;
         }//end UsersController(DataContext)
 
-        //will take GET out. avoiding errors for now
-        [HttpGet]
-        private object GetUserById()
-        {
-            throw new NotImplementedException();
-        }
 
         [HttpPost]
-        public ActionResult<UserDto> CreateUser(UserDto user)
+        [Authorize(Roles = Role.Admin)]
+        public async Task<ActionResult<UserDto>> CreateUser(UserDto user)
         {
-            
-            return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
+            if (user.UserName == null)
+            {
+                return BadRequest();
+            }//end if for UserName == null
+
+            if (!user.Roles.Any())
+            {
+                return BadRequest("Must have a role");
+            }//end if for roles
+
+            var newUser = new User
+            {
+                UserName = user.UserName,
+            };
+
+            return Ok(new UserDto
+            {
+                Id = newUser.Id,
+                Roles = user.Roles,
+                UserName = newUser.UserName,
+            }) ;
         }//end ActionResult CreateUser
+
     }//end UsersController
+
 }//end namespace
