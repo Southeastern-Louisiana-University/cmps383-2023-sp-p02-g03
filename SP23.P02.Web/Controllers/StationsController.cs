@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SP23.P02.Web.Data;
+using SP23.P02.Web.Features.Roles;
 using SP23.P02.Web.Features.TrainStations;
 
 namespace SP23.P02.Web.Controllers;
@@ -38,6 +41,7 @@ public class StationsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public ActionResult<TrainStationDto> CreateStation(TrainStationDto dto)
     {
         if (IsInvalid(dto))
@@ -49,6 +53,7 @@ public class StationsController : ControllerBase
         {
             Name = dto.Name,
             Address = dto.Address,
+            ManagerId = dto.ManagerId,
         };
         stations.Add(station);
 
@@ -61,6 +66,7 @@ public class StationsController : ControllerBase
 
     [HttpPut]
     [Route("{id}")]
+    [Authorize]
     public ActionResult<TrainStationDto> UpdateStation(int id, TrainStationDto dto)
     {
         if (IsInvalid(dto))
@@ -74,8 +80,14 @@ public class StationsController : ControllerBase
             return NotFound();
         }
 
+        if (!User.IsInRole(Role.Admin))
+        {
+            return Forbid();
+        }
+
         station.Name = dto.Name;
         station.Address = dto.Address;
+        station.ManagerId = dto.ManagerId;
 
         dataContext.SaveChanges();
 
@@ -86,12 +98,18 @@ public class StationsController : ControllerBase
 
     [HttpDelete]
     [Route("{id}")]
+    [Authorize]
     public ActionResult DeleteStation(int id)
     {
         var station = stations.FirstOrDefault(x => x.Id == id);
         if (station == null)
         {
             return NotFound();
+        }
+
+        if (!User.IsInRole(Role.Admin))
+        {
+            return Forbid();
         }
 
         stations.Remove(station);
@@ -116,6 +134,7 @@ public class StationsController : ControllerBase
                 Id = x.Id,
                 Name = x.Name,
                 Address = x.Address,
+                ManagerId = x.ManagerId,
             });
     }
 }
