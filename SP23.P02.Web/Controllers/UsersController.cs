@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SP23.P02.Web.Data;
 using SP23.P02.Web.Features.Users;
+using SP23.P02.Web.Features.Roles;
 
 namespace SP23.P02.Web.Controllers
 {
@@ -11,13 +12,12 @@ namespace SP23.P02.Web.Controllers
     public class UsersController : ControllerBase
     {
         private readonly UserManager<User> userManager;
-        //private readonly RoleManager<Role> roleManager;
+        private readonly RoleManager<Role> roleManager;
 
-        //will add - , RoleManager<Role> roleManager
-        public UsersController(UserManager<User> userManager)
+        public UsersController(UserManager<User> userManager, RoleManager<Role> roleManager)
         {
             this.userManager = userManager;
-            //this.roleManager = roleManager;
+            this.roleManager = roleManager;
         }//end UsersController(DataContext)
 
         //will take GET out. avoiding errors for now
