@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 // sets up our database connection
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DataContext")));
 
-builder.Services.AddIdentity<User, Role>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddIdentity<User, Role>()
                 .AddEntityFrameworkStores<DataContext>();
 
 builder.Services.ConfigureApplicationCookie(options =>
@@ -54,8 +54,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
-app.UseAuthorization();
-
 app.UseRouting();
 app.UseAuthorization();
 app.UseEndpoints(routeBuilder =>
