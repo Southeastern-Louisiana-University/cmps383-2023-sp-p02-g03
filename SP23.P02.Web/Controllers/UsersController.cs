@@ -21,7 +21,7 @@ namespace SP23.P02.Web.Controllers
             this.roleManager = roleManager;
         }//end UsersController(DataContext)
 
-
+        //, CreateUserDto createUser
         [HttpPost]
         [Authorize(Roles = Role.Admin)]
         public async Task<ActionResult<UserDto>> CreateUser(UserDto user)
@@ -36,17 +36,50 @@ namespace SP23.P02.Web.Controllers
                 return BadRequest("Must have a role");
             }//end if for roles
 
+            //role must exist. return BadRequest if not
+            var roleExists = await roleManager.Roles.Select(x => x.Name).ToListAsync();
+            foreach (var role in user.Roles)
+            {
+                if (!roleExists.Contains(role))
+                {
+                    return BadRequest($"'{role}' does not exist");
+                }
+            }
+
+            //UserName must not be taken
+            var isTaken = await userManager.FindByNameAsync(user.UserName);
+            if (isTaken != null)
+            {
+                return BadRequest("User name is taken");
+            }
+
+            //create UserName
             var newUser = new User
             {
                 UserName = user.UserName,
             };
+
+            //user must create a password
+            /*
+            var isPassword = await userManager.CreateAsync(newUser, createUser.Password);
+            if (!isPassword.Succeeded)
+            {
+                return BadRequest("Must have password");
+            }
+            */
+
+            var assignRole = await userManager.AddToRolesAsync(newUser, user.Roles);
+            if (!assignRole.Succeeded)
+            {
+                return BadRequest();
+            }
 
             return Ok(new UserDto
             {
                 Id = newUser.Id,
                 Roles = user.Roles,
                 UserName = newUser.UserName,
-            }) ;
+            });
         }//end ActionResult CreateUser
 
     }//end UsersController
