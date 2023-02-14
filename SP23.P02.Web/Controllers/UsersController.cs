@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SP23.P02.Web.Data;
 using SP23.P02.Web.Features.Users;
 using SP23.P02.Web.Features.Roles;
 using Microsoft.AspNetCore.Authorization;
@@ -21,10 +20,9 @@ namespace SP23.P02.Web.Controllers
             this.roleManager = roleManager;
         }//end UsersController(DataContext)
 
-        //, CreateUserDto createUser
         [HttpPost]
         [Authorize(Roles = Role.Admin)]
-        public async Task<ActionResult<UserDto>> CreateUser(UserDto user)
+        public async Task<ActionResult<UserDto>> CreateUser(CreateUserDto user)
         {
             if (user.UserName == null)
             {
@@ -60,13 +58,11 @@ namespace SP23.P02.Web.Controllers
             };
 
             //user must create a password
-            /*
-            var isPassword = await userManager.CreateAsync(newUser, createUser.Password);
+            var isPassword = await userManager.CreateAsync(newUser, user.Password);
             if (!isPassword.Succeeded)
             {
                 return BadRequest("Must have password");
             }
-            */
 
             var assignRole = await userManager.AddToRolesAsync(newUser, user.Roles);
             if (!assignRole.Succeeded)
