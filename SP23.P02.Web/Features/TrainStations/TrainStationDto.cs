@@ -11,5 +11,4 @@ public class TrainStationDto
     public string Address { get; set; }
 
     public int? ManagerId { get; set; }
-    public virtual User? Manager { get; set; }
 }
