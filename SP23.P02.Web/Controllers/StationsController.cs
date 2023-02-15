@@ -74,21 +74,23 @@ public class StationsController : ControllerBase
             return BadRequest();
         }
 
-        var station = stations.FirstOrDefault(x => x.Id == id);
+        var station = stations.Include(x => x.Manager)
+                              .FirstOrDefault(x => x.Id == id);
         if (station == null)
         {
             return NotFound();
         }
 
-        if (!User.IsInRole(Role.Admin))
+        if (!(User.IsInRole(Role.Admin) || (User.Identity?.Name == station.Manager?.UserName)))
         {
             return Forbid();
         }
 
         station.Name = dto.Name;
         station.Address = dto.Address;
-        station.ManagerId = dto.ManagerId;
-
+        if (User.IsInRole(Role.Admin)) {
+            station.ManagerId = dto.ManagerId;
+        }
         dataContext.SaveChanges();
 
         dto.Id = station.Id;
