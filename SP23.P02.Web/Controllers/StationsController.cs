@@ -44,7 +44,7 @@ public class StationsController : ControllerBase
     [Authorize(Roles = "Admin")]
     public ActionResult<TrainStationDto> CreateStation(TrainStationDto dto)
     {
-        if (IsInvalid(dto))
+        if (IsInvalid(dto) || !IsManagerIdValid(dto))
         {
             return BadRequest();
         }
@@ -69,7 +69,7 @@ public class StationsController : ControllerBase
     [Authorize]
     public ActionResult<TrainStationDto> UpdateStation(int id, TrainStationDto dto)
     {
-        if (IsInvalid(dto))
+        if (IsInvalid(dto) || !IsManagerIdValid(dto))
         {
             return BadRequest();
         }
@@ -126,6 +126,11 @@ public class StationsController : ControllerBase
         return string.IsNullOrWhiteSpace(dto.Name) ||
                dto.Name.Length > 120 ||
                string.IsNullOrWhiteSpace(dto.Address);
+    }
+
+    private bool IsManagerIdValid(TrainStationDto dto)
+    {
+        return dto.ManagerId == null || dataContext.Users.Any(x => x.Id == dto.ManagerId);
     }
 
     private static IQueryable<TrainStationDto> GetTrainStationDtos(IQueryable<TrainStation> stations)
