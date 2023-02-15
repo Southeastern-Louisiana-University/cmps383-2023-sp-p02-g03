@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SP23.P02.Web.Data;
 
@@ -11,9 +12,11 @@ using SP23.P02.Web.Data;
 namespace SP23.P02.Web.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230207044649_AddIdentityUsersAndRoles")]
+    partial class AddIdentityUsersAndRoles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -152,17 +155,12 @@ namespace SP23.P02.Web.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ManagerId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(120)
                         .HasColumnType("nvarchar(120)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ManagerId");
 
                     b.ToTable("TrainStation");
                 });
@@ -284,15 +282,6 @@ namespace SP23.P02.Web.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("SP23.P02.Web.Features.TrainStations.TrainStation", b =>
-                {
-                    b.HasOne("SP23.P02.Web.Features.Users.User", "Manager")
-                        .WithMany()
-                        .HasForeignKey("ManagerId");
-
-                    b.Navigation("Manager");
                 });
 
             modelBuilder.Entity("SP23.P02.Web.Features.UserRoles.UserRole", b =>
